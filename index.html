@@ -1,1 +1,125 @@
-
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      #textbox {
+        width: 100%;
+        min-height: 200px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        white-space: pre-wrap;
+      }
+      #controls {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+      #status {
+        padding: 10px;
+        background-color: #f8f8f8;
+        border-radius: 5px;
+      }
+      </style>
+  </head>
+  
+  <body>
+    <h1>Real-time Speech Recognition</h1>
+    <div id="textbox"></div>
+    <div id="controls">
+      <button id="start-btn">Start</button>
+      <button id="stop-btn" disabled>Stop</button>
+      <button id="clear-btn">Clear</button>
+    </div>
+    <div id="status">Click Start to begin speaking</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+      var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      var recognition = new SpeechRecognition();
+      var Textbox = $('#textbox');
+      var Status = $('#status');
+      var startBtn = $('#start-btn');
+      var stopBtn = $('#stop-btn');
+      var clearBtn = $('#clear-btn');
+      var finalTranscript = '';
+      var interimTranscript = '';
+      // Configure recognition
+      recognition.continuous = true;
+      recognition.interimResults = true; // This enables real-time results
+      recognition.onresult = function(event) {
+          interimTranscript = '';
+          for (var i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+                finalTranscript += event.results[i][0].transcript + ' ';
+            } else {
+                interimTranscript += event.results[i][0].transcript;
+            }
+          }
+        
+        // Display both final and interim results
+        Textbox.html(finalTranscript + '<span style="color: #999;">' + interimTranscript + '</span>');
+      
+        // Auto-scroll to the bottom
+        Textbox.scrollTop(Textbox[0].scrollHeight);
+      };
+      recognition.onstart = function() {
+        Status.text('Voice recognition is active. Speak now.');
+        startBtn.prop('disabled', true);
+        stopBtn.prop('disabled', false);
+      };
+      recognition.onend = function() {
+        Status.text('Voice recognition stopped.');
+        startBtn.prop('disabled', false);
+        stopBtn.prop('disabled', true);
+      };
+      recognition.onerror = function(event) {
+        if (event.error == 'no-speech') {
+          Status.text('No speech detected. Try again.');
+        } else {
+          Status.text('Error: ' + event.error);
+        }
+        startBtn.prop('disabled', false);
+        stopBtn.prop('disabled', true);
+      };
+      startBtn.on('click', function() {
+        try {
+          recognition.start();
+        } catch (e) {
+          Status.text('Error starting recognition: ' + e.message);
+        }
+      });
+      stopBtn.on('click', function() {
+          recognition.stop();
+      });
+      clearBtn.on('click', function() {
+        finalTranscript = '';
+        interimTranscript = '';
+        Textbox.html('');
+        Status.text('Text cleared. Click Start to begin speaking.');
+      });
+    </script>
+  </body>
+  </html>
