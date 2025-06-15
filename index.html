@@ -139,8 +139,15 @@ socket.onopen = () => {
 
         currentParagraph.innerHTML = highlightText(transcript);
         lastSpokenTime = Date.now(); // reset silence time
+      // Send transcript to participants
+if (socket.readyState === WebSocket.OPEN) {
+  socket.send(JSON.stringify({
+    text: transcript,
+    time: new Date().toISOString()
+  }));
+}
       };
-
+      
       recognition.onend = () => {
         console.log("Speech recognition ended, restarting...");
         recognition.start(); // always restart immediately
