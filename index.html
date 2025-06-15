@@ -1,125 +1,209 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-      }
-      #textbox {
-        width: 100%;
-        min-height: 200px;
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin-bottom: 20px;
-        border-radius: 5px;
-        white-space: pre-wrap;
-      }
-      #controls {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-      }
-      button {
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 5px;
-      }
-      button:hover {
-        background-color: #45a049;
-      }
-      button:disabled {
-        background-color: #cccccc;
-        cursor: not-allowed;
-      }
-      #status {
-        padding: 10px;
-        background-color: #f8f8f8;
-        border-radius: 5px;
-      }
-      </style>
-  </head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>3MTT potisku ALC hearing inspared assistance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body{
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, #005f73, #0a9396, #94d2bd);
+  background-size: 400% 400%;
+  animation: oceanFlow 20s ease infinite;
+}
+
+@keyframes oceanFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    #transcript {
+      font-size: 1.2rem;
+      margin: 20px auto;
+      max-width: 800px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow-wrap: break-word;
+    }
+
+    .paragraph {
+      margin-bottom: 5px;
+      line-height: 1.5;
+    }
+
+    .highlight {
+      color: red;
+      font-weight: bold;
+    }
+
+    button {
+      display: block;
+      text-align: center;
+      margin: 5px auto;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    @media (max-width: 600px) {
+      #transcript { font-size: 1rem; padding: 10px; }
+      button { 
+              width: 90%; 
+              font-size: 1.1rem;
+             }
+    }
+  </style>
+</head>
+<body>
+ <marquee> <h3>3MTT potiskum ALC hearing inspared assistance</h3></marquee>
+  <button onclick="generatePDF()">Save as PDF</button><br>
   
-  <body>
-    <h1>Real-time Speech Recognition</h1>
-    <div id="textbox"></div>
-    <div id="controls">
-      <button id="start-btn">Start</button>
-      <button id="stop-btn" disabled>Stop</button>
-      <button id="clear-btn">Clear</button>
-    </div>
-    <div id="status">Click Start to begin speaking</div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script>
-      var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      var recognition = new SpeechRecognition();
-      var Textbox = $('#textbox');
-      var Status = $('#status');
-      var startBtn = $('#start-btn');
-      var stopBtn = $('#stop-btn');
-      var clearBtn = $('#clear-btn');
-      var finalTranscript = '';
-      var interimTranscript = '';
-      // Configure recognition
+  <div id="transcript"></div>
+  
+<script> alert ("This website is automatically starting recognition of your speech and transcript it into text all what you need is to start speaking...");</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    // WebSocket connection
+const socket = new WebSocket("https://tea-boy13.github.io/RR/"); // use your real IP/domain here
+
+socket.onopen = () => {
+  console.log("WebSocket connected");
+};
+    const transcriptContainer = document.getElementById("transcript");
+    let recognition;
+    let currentParagraph = null;
+    let lastSpokenTime = Date.now();
+    let silenceChecker = null;
+
+    const objectKeywords = ["computer","algorithm", "data structure", "computation", "variable", "loop", "condition", "function", "recursion", "array", "stack", "queue", "linked list", "tree", "graph", "sorting", "searching", "binary", "decimal", "hexadecimal", "logic gates", "boolean", "compiler", "interpreter", "syntax", "semantics", "debugging", "error", "exception", "runtime", "compile time", "pointer", "reference", "parameter", "argument", "class", "object", "inheritance", "polymorphism", "encapsulation", "abstraction", "interface", "thread", "process", "memory", "storage", "buffer", "cache", "bandwidth", "latency", "throughput",
+
+"python", "java", "c++", "c", "javascript", "php", "ruby", "kotlin", "swift", "r", "go", "rust", "typescript", "sql", "bash", "perl", "haskell", "scala", "lua", "matlab", "dart", "assembly", "visual basic", "objective-c", "cobol", "fortran", "elixir", "f#", "clojure", "scheme", "lisp", "prolog", "groovy", "ocaml", "julia", "vhdl", "verilog", "scratch", "shell", "t-sql", "pl/sql", "apex", "awk", "actionscript", "nim", "crystal", "smalltalk", "zig", "ada", "erlang",
+
+"git", "github", "vs code", "intellij", "eclipse", "netbeans", "sublime text", "pycharm", "android studio", "xcode", "docker", "kubernetes", "jenkins", "travis ci", "circleci", "gradle", "maven", "npm", "webpack", "babel", "eslint", "prettier", "postman", "swagger", "insomnia", "jira", "trello", "figma", "firebase", "aws", "azure", "gcp", "heroku", "vercel", "netlify", "linux", "windows", "macos", "ubuntu", "centos", "red hat", "arch linux", "kali linux", "command line", "terminal", "shell script", "ansible", "terraform", "puppet", "chef",
+
+"html", "css", "javascript", "react", "angular", "vue", "svelte", "tailwind", "bootstrap", "material ui", "jquery", "node.js", "express.js", "next.js", "nuxt.js", "rest api", "graphql", "websocket", "ajax", "json", "xml", "http", "https", "url", "domain", "dns", "hosting", "backend", "frontend", "full stack", "ssr", "csr", "mvc", "authentication", "authorization", "jwt", "oauth", "firebase auth", "localstorage", "session", "cookies", "cdn", "cors", "ssl", "tls", "responsive design", "progressive web app", "seo", "accessibility", "web server",
+
+"cpu", "gpu", "ram", "ssd", "hdd", "motherboard", "chipset", "bios", "uefi", "power supply", "fan", "heatsink", "case", "monitor", "keyboard", "mouse", "webcam", "printer", "usb", "hdmi", "vga", "displayport", "ethernet", "wi-fi", "bluetooth", "router", "switch", "modem", "nas", "raid", "firmware", "embedded system", "sensor", "microcontroller", "raspberry pi", "arduino", "fpga", "pcb", "serial port", "parallel port", "i/o", "clock speed", "bus", "addressing", "cache memory", "virtual memory", "overclocking", "cooling system", "thermal paste", "battery",
+
+"set", "graph theory", "matrix", "vector", "probability", "statistics", "permutation", "combination", "prime", "factor", "gcd", "lcm", "modulo", "logarithm", "exponent", "base", "number system", "proof", "induction", "discrete math", "boolean algebra", "truth table", "predicate logic", "quantifier", "theorem", "lemma", "corollary", "hypothesis", "equation", "inequality", "linear algebra", "calculus", "derivative", "integral", "limit", "sequence", "series", "function", "domain", "range", "recurrence", "complexity", "big o", "big theta", "big omega", "turing machine", "finite automata", "dfa", "nfa", "regex"];
+
+    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (window.SpeechRecognition) {
+      recognition = new SpeechRecognition();
       recognition.continuous = true;
-      recognition.interimResults = true; // This enables real-time results
-      recognition.onresult = function(event) {
-          interimTranscript = '';
-          for (var i = event.resultIndex; i < event.results.length; ++i) {
-            if (event.results[i].isFinal) {
-                finalTranscript += event.results[i][0].transcript + ' ';
-            } else {
-                interimTranscript += event.results[i][0].transcript;
-            }
-          }
-        
-        // Display both final and interim results
-        Textbox.html(finalTranscript + '<span style="color: #999;">' + interimTranscript + '</span>');
-      
-        // Auto-scroll to the bottom
-        Textbox.scrollTop(Textbox[0].scrollHeight);
+      recognition.interimResults = true;
+      recognition.lang = "en-NG";
+
+      recognition.onstart = () => {
+        console.log("Speech recognition started.");
+        if (!currentParagraph) createNewParagraph();
       };
-      recognition.onstart = function() {
-        Status.text('Voice recognition is active. Speak now.');
-        startBtn.prop('disabled', true);
-        stopBtn.prop('disabled', false);
-      };
-      recognition.onend = function() {
-        Status.text('Voice recognition stopped.');
-        startBtn.prop('disabled', false);
-        stopBtn.prop('disabled', true);
-      };
-      recognition.onerror = function(event) {
-        if (event.error == 'no-speech') {
-          Status.text('No speech detected. Try again.');
-        } else {
-          Status.text('Error: ' + event.error);
+
+      recognition.onresult = (event) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          transcript += event.results[i][0].transcript;
         }
-        startBtn.prop('disabled', false);
-        stopBtn.prop('disabled', true);
+
+        currentParagraph.innerHTML = highlightText(transcript);
+        lastSpokenTime = Date.now(); // reset silence time
       };
-      startBtn.on('click', function() {
-        try {
-          recognition.start();
-        } catch (e) {
-          Status.text('Error starting recognition: ' + e.message);
+
+      recognition.onend = () => {
+        console.log("Speech recognition ended, restarting...");
+        recognition.start(); // always restart immediately
+      };
+
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+        recognition.stop();
+        setTimeout(() => recognition.start(), 1000);
+      };
+
+      // Start listening and silence monitoring
+      recognition.start();
+      startSilenceMonitor();
+    } else {
+      alert("Speech Recognition is not supported in this browser.");
+    }
+
+    function startSilenceMonitor() {
+      silenceChecker = setInterval(() => {
+        const now = Date.now();
+        const silenceDuration = now - lastSpokenTime;
+
+        if (silenceDuration >= 1000) { 
+          console.log("1 seconds of silence detected. Creating new paragraph...");
+          createNewParagraph();
+          lastSpokenTime = Date.now(); // reset for next paragraph
         }
+      }, 1000); // check every 1 second
+    }
+
+    function createNewParagraph() {
+      currentParagraph = document.createElement("p");
+      currentParagraph.classList.add("paragraph");
+      currentParagraph.innerHTML = ""; // Start fresh
+      transcriptContainer.appendChild(currentParagraph);
+    }
+
+    function highlightText(text) {
+      let words = text.trim().split(" ");
+      if (words[0]) {
+        words[0] = `<span class="highlight">${words[0]}</span>`;
+      }
+
+      words = words.map(word => {
+        if (objectKeywords.includes(word.toLowerCase())) {
+          return `<span class="highlight">${word}</span>`;
+        }
+        return word;
       });
-      stopBtn.on('click', function() {
-          recognition.stop();
-      });
-      clearBtn.on('click', function() {
-        finalTranscript = '';
-        interimTranscript = '';
-        Textbox.html('');
-        Status.text('Text cleared. Click Start to begin speaking.');
-      });
-    </script>
-  </body>
-  </html>
+
+      return words.join(" ");
+    }
+
+    function generatePDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      let paragraphs = document.querySelectorAll(".paragraph");
+      let content = "";
+      paragraphs.forEach(p => content += p.textContent + "\n\n");
+      doc.text(content, 10, 10);
+      doc.save("transcript.pdf");
+    }
+  </script>
+</body>
+    </html>
