@@ -2,66 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>3MTT potisku ALC hearing inspared assistance</title>
+  <title>3MTT potiskum ALC Hearing Inspired Assistance</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body{
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden;
-}
-
-body {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(120deg, #005f73, #0a9396, #94d2bd);
-  background-size: 400% 400%;
-  animation: oceanFlow 20s ease infinite;
-}
-
-@keyframes oceanFlow {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-    h1 {
-      text-align: center;
-      color: #333;
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      width: 100%;
+      background: linear-gradient(120deg, #005f73, #0a9396, #94d2bd);
+      background-size: 400% 400%;
+      animation: oceanFlow 20s ease infinite;
     }
 
-    #transcript {
-      font-size: 1.2rem;
-      margin: 20px auto;
+    @keyframes oceanFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    textarea#transcriptBox {
+      width: 90%;
       max-width: 800px;
+      height: 300px;
+      margin: 20px auto;
+      display: block;
       padding: 15px;
-      background: #fff;
-      border: 1px solid #ddd;
+      font-size: 1.1rem;
+      border: 1px solid #ccc;
       border-radius: 8px;
-      overflow-wrap: break-word;
-    }
-
-    .paragraph {
-      margin-bottom: 5px;
-      line-height: 1.5;
-    }
-
-    .highlight {
-      color: red;
-      font-weight: bold;
+      resize: vertical;
+      background: #fff;
     }
 
     button {
       display: block;
-      text-align: center;
-      margin: 5px auto;
+      margin: 10px auto;
       padding: 10px 20px;
       font-size: 1rem;
       background-color: #007bff;
@@ -76,47 +53,31 @@ body {
     }
 
     @media (max-width: 600px) {
-      #transcript { font-size: 1rem; padding: 10px; }
-      button { 
-              width: 90%; 
-              font-size: 1.1rem;
-             }
+      textarea#transcriptBox { font-size: 1rem; padding: 10px; }
+      button { width: 90%; font-size: 1.1rem; }
     }
   </style>
 </head>
 <body>
- <marquee> <h3>3MTT potiskum ALC hearing inspared assistance</h3></marquee>
-  <button onclick="generatePDF()">Save as PDF</button><br>
-  
-  <div id="transcript"></div>
-  
-<script> alert ("This website is automatically starting recognition of your speech and transcript it into text all what you need is to start speaking...");</script>
+
+  <marquee><h3>3MTT potiskum ALC Hearing Inspired Assistance</h3></marquee>
+
+  <button onclick="startRecognition()">Start</button>
+  <button onclick="pauseRecognition()">Pause</button>
+  <button onclick="resumeRecognition()">Resume</button>
+  <button onclick="generatePDF()">Save as PDF</button>
+
+  <textarea id="transcriptBox" placeholder="Your transcript will appear here..."></textarea>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
-    // WebSocket connection
-const socket = new WebSocket("https://tea-boy13.github.io/RR/"); // use your real IP/domain here
+    alert("This website automatically starts speech recognition once you click 'Start'. Begin speaking and your words will be transcribed.");
 
-socket.onopen = () => {
-  console.log("WebSocket connected");
-};
-    const transcriptContainer = document.getElementById("transcript");
+    const transcriptBox = document.getElementById("transcriptBox");
     let recognition;
-    let currentParagraph = null;
-    let lastSpokenTime = Date.now();
-    let silenceChecker = null;
-
-    const objectKeywords = ["computer","algorithm", "data structure", "computation", "variable", "loop", "condition", "function", "recursion", "array", "stack", "queue", "linked list", "tree", "graph", "sorting", "searching", "binary", "decimal", "hexadecimal", "logic gates", "boolean", "compiler", "interpreter", "syntax", "semantics", "debugging", "error", "exception", "runtime", "compile time", "pointer", "reference", "parameter", "argument", "class", "object", "inheritance", "polymorphism", "encapsulation", "abstraction", "interface", "thread", "process", "memory", "storage", "buffer", "cache", "bandwidth", "latency", "throughput",
-
-"python", "java", "c++", "c", "javascript", "php", "ruby", "kotlin", "swift", "r", "go", "rust", "typescript", "sql", "bash", "perl", "haskell", "scala", "lua", "matlab", "dart", "assembly", "visual basic", "objective-c", "cobol", "fortran", "elixir", "f#", "clojure", "scheme", "lisp", "prolog", "groovy", "ocaml", "julia", "vhdl", "verilog", "scratch", "shell", "t-sql", "pl/sql", "apex", "awk", "actionscript", "nim", "crystal", "smalltalk", "zig", "ada", "erlang",
-
-"git", "github", "vs code", "intellij", "eclipse", "netbeans", "sublime text", "pycharm", "android studio", "xcode", "docker", "kubernetes", "jenkins", "travis ci", "circleci", "gradle", "maven", "npm", "webpack", "babel", "eslint", "prettier", "postman", "swagger", "insomnia", "jira", "trello", "figma", "firebase", "aws", "azure", "gcp", "heroku", "vercel", "netlify", "linux", "windows", "macos", "ubuntu", "centos", "red hat", "arch linux", "kali linux", "command line", "terminal", "shell script", "ansible", "terraform", "puppet", "chef",
-
-"html", "css", "javascript", "react", "angular", "vue", "svelte", "tailwind", "bootstrap", "material ui", "jquery", "node.js", "express.js", "next.js", "nuxt.js", "rest api", "graphql", "websocket", "ajax", "json", "xml", "http", "https", "url", "domain", "dns", "hosting", "backend", "frontend", "full stack", "ssr", "csr", "mvc", "authentication", "authorization", "jwt", "oauth", "firebase auth", "localstorage", "session", "cookies", "cdn", "cors", "ssl", "tls", "responsive design", "progressive web app", "seo", "accessibility", "web server",
-
-"cpu", "gpu", "ram", "ssd", "hdd", "motherboard", "chipset", "bios", "uefi", "power supply", "fan", "heatsink", "case", "monitor", "keyboard", "mouse", "webcam", "printer", "usb", "hdmi", "vga", "displayport", "ethernet", "wi-fi", "bluetooth", "router", "switch", "modem", "nas", "raid", "firmware", "embedded system", "sensor", "microcontroller", "raspberry pi", "arduino", "fpga", "pcb", "serial port", "parallel port", "i/o", "clock speed", "bus", "addressing", "cache memory", "virtual memory", "overclocking", "cooling system", "thermal paste", "battery",
-
-"set", "graph theory", "matrix", "vector", "probability", "statistics", "permutation", "combination", "prime", "factor", "gcd", "lcm", "modulo", "logarithm", "exponent", "base", "number system", "proof", "induction", "discrete math", "boolean algebra", "truth table", "predicate logic", "quantifier", "theorem", "lemma", "corollary", "hypothesis", "equation", "inequality", "linear algebra", "calculus", "derivative", "integral", "limit", "sequence", "series", "function", "domain", "range", "recurrence", "complexity", "big o", "big theta", "big omega", "turing machine", "finite automata", "dfa", "nfa", "regex"];
+    let finalTranscript = "";
+    let isRecognizing = false;
 
     window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -127,90 +88,65 @@ socket.onopen = () => {
       recognition.lang = "en-NG";
 
       recognition.onstart = () => {
+        isRecognizing = true;
         console.log("Speech recognition started.");
-        if (!currentParagraph) createNewParagraph();
       };
 
       recognition.onresult = (event) => {
-        let transcript = '';
+        let interim = '';
         for (let i = event.resultIndex; i < event.results.length; ++i) {
-          transcript += event.results[i][0].transcript;
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript + ". ";
+          } else {
+            interim += transcript;
+          }
         }
-
-        currentParagraph.innerHTML = highlightText(transcript);
-        lastSpokenTime = Date.now(); // reset silence time
-      // Send transcript to participants
-if (socket.readyState === WebSocket.OPEN) {
-  socket.send(JSON.stringify({
-    text: transcript,
-    time: new Date().toISOString()
-  }));
-}
+        transcriptBox.value = finalTranscript + interim;
+        transcriptBox.scrollTop = transcriptBox.scrollHeight;
       };
-      
+
       recognition.onend = () => {
-        console.log("Speech recognition ended, restarting...");
-        recognition.start(); // always restart immediately
+        isRecognizing = false;
+        console.log("Speech recognition ended.");
       };
 
       recognition.onerror = (event) => {
         console.error("Speech recognition error:", event.error);
         recognition.stop();
+        isRecognizing = false;
         setTimeout(() => recognition.start(), 1000);
       };
-
-      // Start listening and silence monitoring
-      recognition.start();
-      startSilenceMonitor();
     } else {
       alert("Speech Recognition is not supported in this browser.");
     }
 
-    function startSilenceMonitor() {
-      silenceChecker = setInterval(() => {
-        const now = Date.now();
-        const silenceDuration = now - lastSpokenTime;
-
-        if (silenceDuration >= 1000) { 
-          console.log("1 seconds of silence detected. Creating new paragraph...");
-          createNewParagraph();
-          lastSpokenTime = Date.now(); // reset for next paragraph
-        }
-      }, 1000); // check every 1 second
-    }
-
-    function createNewParagraph() {
-      currentParagraph = document.createElement("p");
-      currentParagraph.classList.add("paragraph");
-      currentParagraph.innerHTML = ""; // Start fresh
-      transcriptContainer.appendChild(currentParagraph);
-    }
-
-    function highlightText(text) {
-      let words = text.trim().split(" ");
-      if (words[0]) {
-        words[0] = `<span class="highlight">${words[0]}</span>`;
+    function startRecognition() {
+      if (!isRecognizing && recognition) {
+        recognition.start();
       }
+    }
 
-      words = words.map(word => {
-        if (objectKeywords.includes(word.toLowerCase())) {
-          return `<span class="highlight">${word}</span>`;
-        }
-        return word;
-      });
+    function pauseRecognition() {
+      if (isRecognizing && recognition) {
+        recognition.stop();
+      }
+    }
 
-      return words.join(" ");
+    function resumeRecognition() {
+      if (!isRecognizing && recognition) {
+        recognition.start();
+      }
     }
 
     function generatePDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-      let paragraphs = document.querySelectorAll(".paragraph");
-      let content = "";
-      paragraphs.forEach(p => content += p.textContent + "\n\n");
-      doc.text(content, 10, 10);
+      const content = transcriptBox.value;
+      const lines = doc.splitTextToSize(content, 180);
+      doc.text(lines, 10, 10);
       doc.save("transcript.pdf");
     }
   </script>
 </body>
-    </html>
+</html>
